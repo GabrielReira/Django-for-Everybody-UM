@@ -1,0 +1,3 @@
+# Building Web Applications in Django
+
+In this course, you will learn how Django communicates with a database through model objects. You will explore Object-Relational Mapping (ORM) for database access and how Django models implement this pattern.  We will review the Object-Oriented (OO) pattern in Python.  You will learn basic Structured Query Language (SQL) and database modeling, including one-to-many and many-to-many relationships and how they work in both the SQL and Django models. You will learn how to use the Django console and scripts to work with your application objects interactively.
