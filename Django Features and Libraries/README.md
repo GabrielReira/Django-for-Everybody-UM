@@ -1,0 +1,3 @@
+# Django Features and Libraries
+
+In this course, you will learn how to build Django-based web applications suitable for use by end users.  You will learn about cookies, sessions, and authentication processes in Django.  You will build navigation into your applications and explore ways to easily improve the look and feel of Django applications.  You will begin to develop a simple application to support a classified ads website that will walk you through many of the issues and techniques that you encounter in website development.  You will also learn how to move an application from development to production.
