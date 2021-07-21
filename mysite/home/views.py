@@ -6,4 +6,3 @@ class HomeView(generic.TemplateView):
 
 def home(request):
     return render(request, 'home/main.html')
-    
