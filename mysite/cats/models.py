@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinLengthValidator, MinValueValidator
 
 
 class Breed(models.Model):
@@ -17,7 +17,9 @@ class Cat(models.Model):
         max_length=200,
         validators=[MinLengthValidator(2, 'Nickname must be greater than 1 character.')]
     )
-    weight = models.PositiveIntegerField()
+    weight = models.FloatField(
+        validators=[MinValueValidator(0.0, 'Weight must be greater than 0.')]
+    )
     foods = models.CharField(max_length=300)
     breed = models.ForeignKey('Breed', on_delete=models.CASCADE, null=False)
 
