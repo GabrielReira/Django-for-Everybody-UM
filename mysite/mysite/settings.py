@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'autos.apps.AutosConfig',
     'cats.apps.CatsConfig',
     'ads.apps.AdsConfig',
+    'unesco.apps.UnescoConfig',
 
     # Extensions
     'django_extensions',
