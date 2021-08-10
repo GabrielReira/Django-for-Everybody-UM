@@ -6,10 +6,11 @@
     <p>Are you sure you want to delete the ad: {{ ad }}?</p>
     <form action="" method="POST">
         {% csrf_token %}
+        <input type="submit" value="Yes, delete.">
         <input
             type="submit"
-            onclick="window.location='{% url 'ads:ad_list' %}' ; return false;"
-            value="Yes, delete."
+            onclick="window.location='{% url 'ads:ad_list' %}'; return false;"
+            value="Cancel"
         >
     </form>
 {% endblock %}

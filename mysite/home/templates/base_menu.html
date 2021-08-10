@@ -13,6 +13,14 @@
             <li {% if request.get_full_path == ads %} class="active" {% endif %}>
                 <a href="{% url 'ads:ad_list' %}">Ads</a>
             </li>
+            {% url 'cats:cat_list' as cats %}
+            <li {% if request.get_full_path == cats %} class="active" {% endif %}>
+                <a href="{% url 'cats:cat_list' %}">Cats</a>
+            </li>
+            {% url 'autos:auto_list' as autos %}
+            <li {% if request.get_full_path == autos %} class="active" {% endif %}>
+                <a href="{% url 'autos:auto_list' %}">Autos</a>
+            </li>
         </ul>
 
         <ul class="nav navbar-nav navbar-right">

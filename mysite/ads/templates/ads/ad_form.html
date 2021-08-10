@@ -3,7 +3,7 @@
 
 {% block content %}
     <p>
-    <form action="" method="post">
+    <form action="" method="post" id="upload_form" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form|crispy }}
         <input type="submit" value="Submit">
@@ -14,4 +14,16 @@
         >
     </form>
     </p>
+    <!-- Check upload file size -->
+    <script>
+    $("#upload_form").submit(function() {
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            var file = $('#id_{{ form.upload_field_name }}')[0].files[0];
+            if (file && file.size > {{ form.max_upload_limit }}) {
+                alert("File " + file.name + " must be <= {{ form.max_upload_limit_text }}")
+            return false;
+            }
+        }
+    });
+    </script>
 {% endblock %}
