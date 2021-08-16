@@ -1,4 +1,4 @@
-from ads.models import Ad, Comment
+from ads.models import Ad, Comment, Fav
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from ads.owner import OwnerListView, OwnerDetailView, OwnerDeleteView
@@ -10,6 +10,18 @@ from django.http.response import HttpResponse
 
 class IndexView(OwnerListView):
     model = Ad
+    template_name = 'ads/ad_list.html'
+
+    def get(self, request):
+        ad_list = Ad.objects.all()
+        favorites = list()
+
+        if (request.user.is_authenticated):
+            rows = request.user.favorite_ads.values('id')  # [{'id': 2}, {'id': 7}, ...]
+            favorites = [row['id'] for row in rows]  # [2, 7, ...]
+        ctx = {'ad_list': ad_list, 'favorites': favorites}
+
+        return render(request, self.template_name, ctx)
 
 
 class AdDetailView(OwnerDetailView):
@@ -78,6 +90,18 @@ class AdDeleteView(OwnerDeleteView):
     model = Ad
 
 
+# Milestone 2
+
+def stream_file(request, pk):
+    ad = get_object_or_404(Ad, id=pk)
+    response = HttpResponse()
+    response['Content-Type'] = ad.content_type
+    response['Content-Length'] = len(ad.picture)
+    response.write(ad.picture)
+
+    return response
+
+
 class CommentCreateView(LoginRequiredMixin, View):
     def post(self, request, pk):
         success_url = reverse_lazy('ads:ad_detail', args=[pk])
@@ -93,11 +117,32 @@ class CommentDeleteView(OwnerDeleteView):
     template_name = 'ads/comment_confirm_delete.html'
 
 
-def stream_file(request, pk):
-    ad = get_object_or_404(Ad, id=pk)
-    response = HttpResponse()
-    response['Content-Type'] = ad.content_type
-    response['Content-Length'] = len(ad.picture)
-    response.write(ad.picture)
+# Milestone 3
 
-    return response
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.db.utils import IntegrityError
+
+@method_decorator(csrf_exempt, name='dispatch')
+class AddFavoriteView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        fav_ad = get_object_or_404(Ad, id=pk)
+        fav = Fav(user=request.user, ad=fav_ad)
+        try:
+            fav.save()
+        except IntegrityError:
+            pass
+
+        return HttpResponse()
+
+@method_decorator(csrf_exempt, name='dispatch')
+class DeleteFavoriteView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        del_ad = get_object_or_404(Ad, id=pk)
+        try:
+            fav = Fav.objects.get(user=request.user, ad=del_ad)
+            fav.delete()
+        except Fav.DoesNotExist:
+            pass
+
+        return HttpResponse()

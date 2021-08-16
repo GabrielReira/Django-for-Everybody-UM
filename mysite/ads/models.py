@@ -27,6 +27,13 @@ class Ad(models.Model):
         related_name='comments_owned'
     )
 
+    # Milestone 3
+    favorites = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        through='Fav',
+        related_name='favorite_ads'
+    )
+
     # Shows up in the admin list
     def __str__(self):
         return self.title
@@ -46,3 +53,15 @@ class Comment(models.Model):
         if len(self.text) < 15:
             return self.text
         return self.text[:11] + ' ...'
+
+
+class Fav(models.Model):
+    ad = models.ForeignKey(Ad, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('ad', 'user')
+
+    # Shows up in the admin list
+    def __str__(self):
+        return f'{self.user.username} likes {self.ad.title[:7]}'
