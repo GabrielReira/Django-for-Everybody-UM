@@ -1,9 +1,10 @@
 from ads.models import Ad, Comment, Fav
+from ads.owner import OwnerListView, OwnerDetailView, OwnerDeleteView
+from ads.forms import CreateForm, CommentForm
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from ads.owner import OwnerListView, OwnerDetailView, OwnerDeleteView
 from django.urls import reverse_lazy
-from ads.forms import CreateForm, CommentForm
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http.response import HttpResponse
 
@@ -13,13 +14,24 @@ class IndexView(OwnerListView):
     template_name = 'ads/ad_list.html'
 
     def get(self, request):
-        ad_list = Ad.objects.all()
         favorites = list()
 
         if (request.user.is_authenticated):
             rows = request.user.favorite_ads.values('id')  # [{'id': 2}, {'id': 7}, ...]
             favorites = [row['id'] for row in rows]  # [2, 7, ...]
-        ctx = {'ad_list': ad_list, 'favorites': favorites}
+
+        # Milestone 4
+        ad_search = request.GET.get("search", False)
+
+        if (ad_search):
+            query = Q(title__icontains=ad_search)
+            query.add(Q(text__icontains=ad_search), Q.OR)
+            query.add(Q(tags__name__in=[ad_search]), Q.OR)
+            ad_list = Ad.objects.filter(query).select_related().distinct().order_by('-updated_at')[:10]
+        else:
+            ad_list = Ad.objects.all().order_by('-updated_at')
+
+        ctx = {'ad_list': ad_list, 'search': ad_search ,'favorites': favorites}
 
         return render(request, self.template_name, ctx)
 
@@ -57,6 +69,7 @@ class AdCreateView(LoginRequiredMixin, View):
         ad = form.save(commit=False)
         ad.owner = self.request.user
         ad.save()
+        form.save_m2m()
 
         return redirect(self.success_url)
 
@@ -82,6 +95,7 @@ class AdUpdateView(LoginRequiredMixin, View):
 
         ad = form.save(commit=False)
         ad.save()
+        form.save_m2m()
 
         return redirect(self.success_url)
 

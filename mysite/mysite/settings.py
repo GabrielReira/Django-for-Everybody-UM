@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'crispy_forms',
     'social_django',
+    'taggit',
 ]
 
 MIDDLEWARE = [

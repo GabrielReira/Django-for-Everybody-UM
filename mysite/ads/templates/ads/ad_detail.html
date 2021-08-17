@@ -22,6 +22,11 @@
             float: right;
             max-width: 50%;
         }
+        .ad-tags {
+            color: white;
+            border: 1px #000 solid;
+            background-color: #1c55ff;
+        }
     </style>
 {% endblock %}
 
@@ -60,6 +65,16 @@
         {{ ad.price }}
     </p>
 
+    {% if ad.tags.all %}
+    <p>
+        Tags:
+        {% for tag in ad.tags.all %}
+        <span class="ad-tags">{{ tag }}</span>
+        {% endfor %}
+    </p>
+    {% endif %}
+
+    <br clear="all"/>
     <!-- Ad Comments -->
     {% if user.is_authenticated %}
         {% load crispy_forms_tags %}
@@ -81,6 +96,7 @@
         </p>
     {% endfor %}
 
+    <br clear="all"/>
     <p>
         <a href="{% url 'ads:ad_list' %}">All ads</a>
     </p>
