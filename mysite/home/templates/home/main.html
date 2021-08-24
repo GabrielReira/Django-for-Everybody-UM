@@ -23,9 +23,10 @@
     </ul>
     </p>
 
+    <br clear="all"/>
     <p>
         {% if user.is_authenticated %}
-            <p>Authenticated as
+            <p>Authenticated as:
             <pre>
 
                 Name: {{ user.get_full_name }}
